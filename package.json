@@ -1,0 +1,14 @@
+{
+  "name": "michibot",
+  "version": "1.0.0",
+  "description": "Bot for michiban fanbase of michi gen 11 jkt48",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mohamad Alief Rizky Ramadhan",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  }
+}
