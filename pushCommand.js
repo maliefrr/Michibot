@@ -10,7 +10,19 @@ const commands = [
 		option.setName('number')
 			.setDescription('The number of messages that you want to clear')
 			.setRequired(true)),
-    new SlashCommandBuilder().setName("download").setDescription("Download image and video from twitter").addStringOption(cmd => cmd.setName("link").setDescription("Link video or image twitter").setRequired(true))
+    new SlashCommandBuilder()
+	.setName('download')
+	.setDescription('Download Image or Video').addSubcommand(subcommand =>
+		subcommand
+			.setName('twitter')
+			.setDescription('Get Image or Video from Twitter')
+			.addStringOption(option => option.setName('link').setDescription('Link File').setRequired(true))
+            ).addSubcommand(subcommand => 
+                subcommand
+                    .setName("tiktok")
+                    .setDescription("Get Video from Tiktok")
+                    .addStringOption(option => option.setName("link").setDescription("Link File").setRequired(true))
+                )
 ].map(command => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
