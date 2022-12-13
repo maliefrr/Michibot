@@ -41,19 +41,43 @@ client.on('interactionCreate', async interaction => {
 		const tweetID = getStatusID(url);
 		const tweet = await getTweet(tweetID);
 		const media = parseMedia(tweet);
-		let tmp = []
-		// console.log(media.media)
-		media.media.forEach(element => {
-			tmp.push((element.url))
-		});
-		console.log(tmp)
-		// for(let i = 0 ; i < tmp.length; i++){
-		// 	interaction.reply(tmp[i])
-		// }
-		interaction.reply({embeds: [...tmp]})
-		// if (!media) return;
+		if (media.type === "video" || media.type === "animated_gif") {
+			try {
+				// const card = {
+				// 	embed: {
+				// 		color: 10422355,
+				// 		video: {
+				// 			url: media.media.url,
+				// 		},
+				// 	},
+				// };
 
-		// const waitMsg = await msg.lineReplyNoMention('Downloading...');
+				// console.log(card)
+				// await interaction.reply(card);
+
+				const videos = []
+				media.media.forEach((p) => {
+					videos.push(new AttachmentBuilder().setFile(p.url));
+				})
+				console.log(videos)
+				await interaction.followUp("https://video.twimg.com/ext_tw_video/1179778992112459776/pu/vid/720x1280/_099oen942JHFm8B.mp4?tag=10")
+			} catch (error1) {
+				const sentAttachment = new AttachmentBuilder(media.media[0].url);
+				await interaction.reply({
+					content: "",
+					files: [sentAttachment],
+				});
+			}
+		}
+
+		if (media.type === "photo") {
+			const photos = [];
+			media.media.forEach((p) => {
+				photos.push(new EmbedBuilder().setImage(p.url));
+			});
+			await interaction.reply({embeds: [...photos]});
+		}
+		// await waitMsg.delete();
 	} catch (error) {
 		console.log("Failed to download tweet", error.message);
 	}
