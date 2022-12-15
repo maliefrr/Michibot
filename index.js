@@ -1,7 +1,6 @@
-const { DiscordAPIError, AttachmentBuilder } = require("discord.js");
-const {Client, GatewayIntentBits, ActivityType, Message, EmbedBuilder} = require("discord.js")
+const {Client, GatewayIntentBits, ActivityType, Message, EmbedBuilder, DiscordAPIError, AttachmentBuilder} = require("discord.js")
 const dotenv = require("dotenv").config();
-const client = new Client({intents : GatewayIntentBits.Guilds});
+const client = new Client({intents : [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]});
 const {getStatusID, getTweet, parseMedia} = require("./services/helpers/twitter")
 
 client.on("ready",() => {
@@ -18,8 +17,8 @@ client.on('interactionCreate', async interaction => {
 	const { commandName } = interaction;
 
 	if(commandName === 'ping') {
-		const m = await interaction.reply("Pinging...");
-		interaction.editReply(`Your ping Latency is ${Math.round(client.ws.ping)}ms`);
+		const m = await interaction.reply({content: "Pinging...", ephemeral: true});
+		interaction.editReply({content: `Your ping Latency is ${Math.round(client.ws.ping)}ms`, ephemeral: true});
 	}
 	if(commandName === 'clear'){
         const {channel,options} = interaction;
@@ -29,8 +28,7 @@ client.on('interactionCreate', async interaction => {
         const res = new EmbedBuilder().setColor(0x5fb041)
 
         await channel.bulkDelete(amount, true).then(messages => {
-            res.setDescription(`Successfully deleted ${messages.size} message from channel`);
-            interaction.reply({embeds: [res]})
+            interaction.reply({content: `Successfully deleted ${messages.size} message from channel`, ephemeral: true})
         })
 	}
 	if(commandName === "download"){
@@ -43,37 +41,25 @@ client.on('interactionCreate', async interaction => {
 		const media = parseMedia(tweet);
 		if (media.type === "video" || media.type === "animated_gif") {
 			try {
-				// const card = {
-				// 	embed: {
-				// 		color: 10422355,
-				// 		video: {
-				// 			url: media.media.url,
-				// 		},
-				// 	},
-				// };
-
-				// console.log(card)
-				// await interaction.reply(card);
 
 				const videos = []
 				media.media.forEach((p) => {
-					videos.push(new AttachmentBuilder().setFile(p.url));
+					console.log(p.url)
+					videos.push(p.url);
 				})
+				const user = new EmbedBuilder().setTitle(`Video from ${media.user}`)
 				console.log(videos)
-				await interaction.followUp("https://video.twimg.com/ext_tw_video/1179778992112459776/pu/vid/720x1280/_099oen942JHFm8B.mp4?tag=10")
+				await interaction.reply({content: `${[...videos]}`})
 			} catch (error1) {
-				const sentAttachment = new AttachmentBuilder(media.media[0].url);
-				await interaction.reply({
-					content: "",
-					files: [sentAttachment],
-				});
+				console.log(error1.message)
+				interaction.reply("error while downloading tweet")
 			}
 		}
 
 		if (media.type === "photo") {
 			const photos = [];
 			media.media.forEach((p) => {
-				photos.push(new EmbedBuilder().setImage(p.url));
+				photos.push(new EmbedBuilder().setImage(p.url).setTitle(`Photos from ${media.user}`));
 			});
 			await interaction.reply({embeds: [...photos]});
 		}
