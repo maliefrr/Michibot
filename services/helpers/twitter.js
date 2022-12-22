@@ -76,9 +76,20 @@ const getStatusID = (url) => {
     }
 }
 
+const getTwitterId = (username) => {
+    Twit.get("users/show",{screen_name : username}, (err,data,response) => {
+        if(err){
+            console.error(err)
+        } else {
+            return data
+        }
+    })
+}
+
 module.exports = {
     Twit,
     getTweet,
     parseMedia,
-    getStatusID
+    getStatusID,
+    getTwitterId
 };

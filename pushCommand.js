@@ -22,7 +22,12 @@ const commands = [
                     .setName("tiktok")
                     .setDescription("Get Video from Tiktok")
                     .addStringOption(option => option.setName("link").setDescription("Link File").setRequired(true))
-                )
+                ),
+    new SlashCommandBuilder()
+                .setName("register")
+                .setDescription("Registering the twitter that want to stream on")
+                .addStringOption(option => option.setName("username").setDescription("The username").setRequired(true))
+                .addChannelOption(option => option.setName("channel").setDescription("The channel that receive the stream").setRequired(true))
 ].map(command => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
